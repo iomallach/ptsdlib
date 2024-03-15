@@ -69,3 +69,8 @@ void vector_foreach(Vector *vector, void (*callback)(void *value)) {
     callback(vector_get(vector, i));
   }
 }
+
+size_t vector_size(Vector *vector) { return vector->size; }
+
+bool vector_is_empty(Vector *vector) { return (vector->size == 0) ? 1 : 0; }
+
