@@ -3,6 +3,10 @@
 
 Vector *vector_new(size_t elem_size) {
   Vector *vector = malloc(sizeof(Vector));
+  if (vector == NULL) {
+    LOG_ERROR("Failed to allocate memory for vector");
+    exit(137);
+  }
   vector->data = NULL;
   vector->capacity = 0;
   vector->size = 0;
@@ -20,6 +24,10 @@ void vector_free(Vector *vector) {
 void vector_push_back(Vector *vector, void *value) {
   if (vector->data == NULL) {
     vector->data = malloc(vector->_elem_malloc_size * VECTOR_INIT_CAPACITY);
+    if (vector->data == NULL) {
+      LOG_ERROR("Failed to allocate memory for vector");
+      exit(137);
+    }
     vector->capacity = VECTOR_INIT_CAPACITY;
     PUSH_BACK(vector, value, vector->_elem_malloc_size);
   } else if (vector->size + 1 > vector->capacity) {
@@ -35,16 +43,29 @@ void vector_push_back(Vector *vector, void *value) {
 void vector_pop_back(Vector *vector) {
   if (vector->size > 0) {
     vector->size -= 1;
+  } else {
+    LOG_ERROR("Vector is empty");
+    exit(-1);
   }
-  // TODO: Realloc at some size/capacity threshold
+
+  if (vector->size < vector->capacity / 2) {
+    vector->data =
+        realloc(vector->data, vector->capacity * vector->_elem_malloc_size / 2);
+  }
 }
 
-void *_vector_at(Vector *vector, size_t index) {
+void *vector_get(Vector *vector, size_t index) {
   return (void *)((char *)vector->data + (index * vector->_elem_malloc_size));
+}
+
+void vector_set(Vector *vector, size_t index, void *value) {
+  size_t offset = index * vector->_elem_malloc_size;
+  memcpy((void *)((char *)vector->data + offset), value,
+         vector->_elem_malloc_size);
 }
 
 void vector_foreach(Vector *vector, void (*callback)(void *value)) {
   for (int i = 0; i < vector->size; i++) {
-    callback(_vector_at(vector, i));
+    callback(vector_get(vector, i));
   }
 }
