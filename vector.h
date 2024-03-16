@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define VECTOR_INIT_CAPACITY 32
 #define PUSH_BACK(vec, src, offset)                                            \
@@ -25,5 +26,7 @@ void vector_pop_back(Vector *vector);
 void vector_foreach(Vector *vector, void (*callback)(void *value));
 void *vector_get(Vector *vector, size_t index);
 void vector_set(Vector *vector, size_t index, void *value);
+bool vector_is_empty(Vector *vector);
+size_t vector_size(Vector *vector);
 
 #endif
